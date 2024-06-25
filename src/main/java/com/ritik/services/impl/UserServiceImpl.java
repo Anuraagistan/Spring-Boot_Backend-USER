@@ -52,6 +52,12 @@ public class UserServiceImpl implements UserService {
 
 	}
 	
+	public Animal addAnimal(Animal animal) {
+		Animal savedAnimal=restTemplate.postForObject("http://localhost:9090/api/animal/add", animal, Animal.class);
+		return savedAnimal;
+	
+	}
+	
 	
 	public UserDto usertoDto(User user) {
 		
