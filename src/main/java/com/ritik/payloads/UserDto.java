@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserDto {
 
+	private Long userId;
+
 	@NotEmpty
 	private String firstname;
 	
@@ -22,8 +24,8 @@ public class UserDto {
 	@NotEmpty
 	@Email
 	private String email;
-	
-	
-	
+
 	private String phoneNumber;
+
+	private Integer animalId;
 }

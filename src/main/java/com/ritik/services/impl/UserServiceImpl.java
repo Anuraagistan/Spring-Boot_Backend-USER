@@ -1,5 +1,8 @@
 package com.ritik.services.impl;
 
+import com.ritik.exceptions.ResourceNotFoundException;
+import com.ritik.vo.Animal;
+import com.ritik.vo.ResponseTemplateVO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,16 +11,20 @@ import com.ritik.entity.User;
 import com.ritik.payloads.UserDto;
 import com.ritik.repositories.UserRepository;
 import com.ritik.services.UserService;
+import org.springframework.web.client.RestTemplate;
 
 
 @Service
 public class UserServiceImpl implements UserService {
 	
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 	
 	@Autowired
-	ModelMapper modelMapper;
+	private ModelMapper modelMapper;
+
+	@Autowired
+	private RestTemplate restTemplate;
 	
 
 	@Override
@@ -28,6 +35,22 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
+	@Override
+	public ResponseTemplateVO getUserWithAnimal(Long userId){
+		ResponseTemplateVO vo = new ResponseTemplateVO();
+		User user = userRepository.findById(userId).orElseThrow(() -> {
+			return new ResourceNotFoundException("User", "userId", userId);
+		});
+		Animal animal = restTemplate.getForObject
+			("http://localhost:9090/api/animal/" + user.getAnimalId()
+			,Animal.class);
+		UserDto userDto = this.usertoDto(user);
+		vo.setUser(userDto);
+		vo.setAnimal(animal);
+
+		return vo;
+
+	}
 	
 	
 	public UserDto usertoDto(User user) {
